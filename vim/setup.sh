@@ -5,6 +5,8 @@ OS_NAME=`uname`
 if [ "Darwin" == ${OS_NAME} ]; then
     xcode-select --install
     brew install cmake macvim
+else
+    sudo apt-get install vim
 fi
 
 mkdir -p ~/.vim/bundle
