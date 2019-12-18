@@ -1,0 +1,75 @@
+set nocompatible
+set splitbelow
+
+filetype plugin indent on 
+
+" Plugins
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+Plugin 'gmarik/Vundle.vim'
+Plugin 'tmhedberg/SimpylFold'
+Plugin 'vim-python/python-syntax'
+Plugin 'morhetz/gruvbox'
+Plugin 'altercation/vim-colors-solarized'
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
+
+call vundle#end()
+
+" Enable folding
+set foldmethod=indent
+set foldlevel=99
+let g:SimpylFold_docstring_preview = 1
+nnoremap <space> za
+
+
+" Syntax highlighting and colours
+syntax on 
+set background=dark
+colorscheme gruvbox
+let g:gruvbox_contrast_dark = 'hard'
+let g:python_highlight_all = 1
+
+
+" Indentation
+au BufNewFile,BufRead *.py
+    \ set tabstop=4 |
+    \ set softtabstop=4 |
+    \ set shiftwidth=4 |
+    \ set textwidth=79 |
+    \ set expandtab |
+    \ set autoindent |
+    \ set fileformat=unix
+
+
+" File explorer
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
+let g:netrw_browse_split = 4
+let g:netrw_altv = 1
+let g:netrw_winsize = 25
+augroup ProjectDrawer
+  autocmd!
+  autocmd VimEnter * :Vexplore
+augroup END
+
+
+" YouCompleteMe
+let g:ycm_autoclose_preview_window_after_completion=1
+map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+
+
+" powerline
+set laststatus=2
+
+
+" Python venv support
+py3 << EOF
+import os
+import sys
+if 'VIRTUAL_ENV' in os.environ:
+  project_base_dir = os.environ['VIRTUAL_ENV']
+  activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
+  exec(open(activate_this).read(), {'__file__': activate_this})
+EOF

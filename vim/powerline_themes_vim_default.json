@@ -1,0 +1,12 @@
+{
+	"segments": {
+		"left": [
+            {
+                "function": "powerline.segments.common.env.virtualenv",
+                    "draw_soft_divider": false,
+                    "after": " ",
+                    "before": "ⓔ "
+            }
+        ]
+    }
+}
