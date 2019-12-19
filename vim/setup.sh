@@ -6,7 +6,7 @@ if [ "Darwin" == ${OS_NAME} ]; then
     xcode-select --install
     brew install cmake macvim
 else
-    sudo apt-get install vim
+    sudo apt-get install -y vim cmake build-essential python3-dev
 fi
 
 mkdir -p ~/.vim/bundle
