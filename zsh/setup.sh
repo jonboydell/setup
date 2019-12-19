@@ -1,4 +1,6 @@
 #!/bin/bash
 
-sudo apt-get -y install zsh
-chsc -s /use/bin/zsh
+if [ "Linux" == `uname` ]; then
+	sudo apt-get -y install zsh
+fi
+chsh -s /usr/bin/zsh
