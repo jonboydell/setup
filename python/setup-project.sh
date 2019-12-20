@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 PROJECT_NAME=${1}
+VIRTUAL_ENV=`which virtualenv`
+
+if [ -z "${VIRTUAL_ENV}" ]; then
+    echo "Must have virtualenv installed" && exit 1
+fi
 
 if [ -z "${PROJECT_NAME}" ]; then
 	echo "Usage: setup-project.sh PROJECT_NAME" && exit 1
@@ -12,5 +17,5 @@ virtualenv python-env
 echo "python-env" >> .gitignore
 echo "__pycache__" >> .gitignore
 source python-env/bin/activate
-pip install flake8
+pip install flake8 pytest
 popd
