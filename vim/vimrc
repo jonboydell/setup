@@ -1,5 +1,6 @@
 set nocompatible
 set splitbelow
+set mouse=n
 
 filetype plugin indent on 
 
@@ -14,8 +15,13 @@ Plugin 'morhetz/gruvbox'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
+Plugin 'vim-syntastic/syntastic'
+Plugin 'tpope/vim-fugitive'
+Plugin 'scrooloose/nerdtree'
+Plugin 'Xuyuanp/nerdtree-git-plugin'
 
 call vundle#end()
+
 
 " Enable folding
 set foldmethod=indent
@@ -43,7 +49,18 @@ au BufNewFile,BufRead *.py
     \ set fileformat=unix
 
 
-" File explorer
+" Syntax checking
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
+
+" Explorer window
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
 let g:netrw_browse_split = 4
@@ -51,8 +68,66 @@ let g:netrw_altv = 1
 let g:netrw_winsize = 25
 augroup ProjectDrawer
   autocmd!
-  autocmd VimEnter * :Vexplore
+  autocmd VimEnter * NERDTree
 augroup END
+
+
+" Bind F5 to save file if modified and execute python script in a buffer.
+nnoremap <silent> <F5> :call SaveAndExecutePython()<CR>
+vnoremap <silent> <F5> :<C-u>call SaveAndExecutePython()<CR>
+
+function! SaveAndExecutePython()
+    " SOURCE [reusable window]: https://github.com/fatih/vim-go/blob/master/autoload/go/ui.vim
+
+    " save and reload current file
+    silent execute "update | edit"
+
+    " get file path of current file
+    let s:current_buffer_file_path = expand("%")
+
+    let s:output_buffer_name = "Python"
+    let s:output_buffer_filetype = "output"
+
+    " reuse existing buffer window if it exists otherwise create a new one
+    if !exists("s:buf_nr") || !bufexists(s:buf_nr)
+        silent execute 'botright new ' . s:output_buffer_name
+        let s:buf_nr = bufnr('%')
+    elseif bufwinnr(s:buf_nr) == -1
+        silent execute 'botright new'
+        silent execute s:buf_nr . 'buffer'
+    elseif bufwinnr(s:buf_nr) != bufwinnr('%')
+        silent execute bufwinnr(s:buf_nr) . 'wincmd w'
+    endif
+
+    silent execute "setlocal filetype=" . s:output_buffer_filetype
+    setlocal bufhidden=delete
+    setlocal buftype=nofile
+    setlocal noswapfile
+    setlocal nobuflisted
+    setlocal winfixheight
+    setlocal cursorline " make it easy to distinguish
+    setlocal nonumber
+    setlocal norelativenumber
+    setlocal showbreak=""
+
+    " clear the buffer
+    setlocal noreadonly
+    setlocal modifiable
+    %delete _
+
+    " add the console output
+    silent execute ".!python " . shellescape(s:current_buffer_file_path, 1)
+
+    " resize window to content length
+    " Note: This is annoying because if you print a lot of lines then your code buffer is forced to a height of one line every time you run this function.
+    "       However without this line the buffer starts off as a default size and if you resize the buffer then it keeps that custom size after repeated runs of this function.
+    "       But if you close the output buffer then it returns to using the default size when its recreated
+    "execute 'resize' . line('$')
+
+    " make the buffer non modifiable
+    setlocal readonly
+    setlocal nomodifiable
+endfunction
 
 
 " YouCompleteMe
