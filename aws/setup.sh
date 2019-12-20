@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
 
-LIMES_URL="https://github.com/otm/limes/releases/latest"
+#AWS CLI should be installed as part of a venv
 
-DOWNLOAD_URL="${LIMES_URL}/limes_linux_amd64"
+#Limes
+LIMES_URL="https://github.com/otm/limes/releases/latest"
+LIMES_DOWNLOAD_URL="${LIMES_URL}/limes_linux_amd64"
 
 if [ "Darwin" == `uname` ]; then
-	DOWNLOAD_URL="${LIMES_URL}/limes_darwin_amd64"
+	LIMES_DOWNLOAD_URL="${LIMES_URL}/limes_darwin_amd64"
 fi
 
-curl -L ${DOWNLOAD_URL} --output limes
+curl -L ${LIMES_DOWNLOAD_URL} --output limes
 chmod +x limes
 mv limes /usr/local/bin/limes 
 
