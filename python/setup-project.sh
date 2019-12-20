@@ -10,6 +10,7 @@ pushd ${HOME}/projects/${PROJECT_NAME}
 git init
 virtualenv python-env
 echo "python-env" >> .gitignore
+echo "__pycache__" >> .gitignore
 source python-env/bin/activate
 pip install flake8
 popd
